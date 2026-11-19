@@ -202,7 +202,7 @@
       <div class="sectionrow"><div><p class="eyebrow">At a glance</p><h2 id="paths-title">Three principal treatment branches</h2></div></div>
       <div class="routes">
         <div id="branch-anticoag" class="route blue"><div class="routehead"><span class="routebadge"></span>Systemic anticoagulation</div><p>No ascites, edema, or necrosis; repeat CT at 24 hours to evaluate for progression.</p></div>
-        <div id="branch-endo" class="route purple"><div class="routehead"><span class="routebadge"></span>Endovascular therapy</div><p>Ascites or bowel wall edema (adapted criterion), or progression on the 24-hour CT.</p></div>
+        <div id="branch-endo" class="route purple"><div class="routehead"><span class="routebadge"></span>Endovascular intervention</div><p>Ascites or bowel wall edema (adapted criterion), or progression on the 24-hour CT.</p></div>
         <div id="branch-surgery" class="route pink"><div class="routehead"><span class="routebadge"></span>Emergency laparotomy</div><p>Intestinal wall necrosis on CT.</p></div>
       </div>
     </section>
@@ -269,7 +269,7 @@
       const notes = data.notes || [];
       result.innerHTML = `<span class="statebadge ${el(data.color)}">${el(data.badge)}</span>
         <h3 class="outcome">${el(data.title)}</h3>
-        <p class="desc">${el(data.description)}</p>
+        ${data.description ? `<p class="desc">${el(data.description)}</p>` : ""}
         <div class="timeline"><h3>Selected decision path</h3><ol>${steps.map(x=>entry(x.title,x.detail,x.important)).join('')}</ol></div>
         ${notes.length?`<div class="care"><h3>Management and follow-up</h3><ul>${notes.map(n=>`<li>${el(n)}</li>`).join('')}</ul></div>`:''}
         <div class="aside-note">Figure-derived institutional pathway only. This output does not establish a patient-specific order or supersede multidisciplinary clinical assessment.</div>`;
@@ -277,8 +277,7 @@
         'ACUTE MESENTERIC VENOUS THROMBOSIS (AMVT) - FIGURE-DERIVED DECISION PATH',
         '',
         'Result: ' + data.title,
-        data.description,
-        '',
+        ...(data.description ? [data.description, ''] : []),
         'Selected path:',
         ...steps.map((s,i) => `${i+1}. ${s.title} - ${s.detail}`),
         '',
@@ -313,13 +312,13 @@
       const m = morphology.value;
       if(m==='highrisk') {
         progress.style.width='100%'; activeBranch('endo');
-        display({badge:'Endovascular pathway',color:'purple',title:'Endovascular therapy',description:'This adapted webpage routes ascites or bowel wall edema to the endovascular pathway. The published Figure 6 specifically depicts both findings without collaterals.',timeline:[baseline,{title:'No intestinal wall necrosis',detail:'Non-necrotic presentation.'},{title:'Ascites or bowel wall edema',detail:'Broadened interface criterion; not the exact original Figure 6 criterion.',important:true},{title:'Endovascular therapy',detail:'Treatment branch in this adapted interface.',important:true},anticoag,followup],notes:['This broadened OR criterion is an adaptation. In the source figure, endovascular therapy is selected for both ascites and bowel wall edema with no collaterals.','The figure subsequently shows systemic anticoagulation. The technique, timing, and contraindications are not specified.','Contrast-enhanced CT (CE-CT) follow-up at 7 days, 30 days, and 6 months.']});
+        display({badge:'Endovascular pathway',color:'purple',title:'Consider early endovascular intervention',description:'',timeline:[baseline,{title:'No intestinal wall necrosis',detail:'Non-necrotic presentation.'},{title:'Ascites or bowel wall edema',detail:'Broadened interface criterion; not the exact original Figure 6 criterion.',important:true},{title:'Endovascular intervention',detail:'Treatment branch in this adapted interface.',important:true},anticoag,followup],notes:['This broadened OR criterion is an adaptation. In the source figure, endovascular intervention is selected for both ascites and bowel wall edema with no collaterals.','The figure subsequently shows systemic anticoagulation. The technique, timing, and contraindications are not specified.','Contrast-enhanced CT (CE-CT) follow-up at 7 days, 30 days, and 6 months.']});
         return;
       }
       // No ascites, no edema, no necrosis: source algorithm starts anticoagulation and CT at 24 h.
       if(!ct24.value) {
         activeBranch('anticoag');
-        display({badge:'Initial medical pathway',color:'blue',title:'Systemic anticoagulation',description:'With no ascites, bowel wall edema, or necrosis, the source algorithm starts systemic anticoagulation and requires a CT reassessment at 24 hours.',timeline:[baseline,{title:'No ascites, edema, or necrosis',detail:'Uncomplicated morphology in the figure.'},{title:'Systemic anticoagulation',detail:'Initial management depicted.',important:true},{title:'Repeat CT at 24 hours',detail:'Pending: select the follow-up CT finding to determine whether to escalate.'}],notes:['Start with the source-specified systemic anticoagulation pathway, subject to standard clinical assessment and contraindications.','Repeat CT at 24 hours. Progression leads to endovascular therapy; absence of progression continues medical management.','The source subsequently shows CE-CT follow-up at 7 days, 30 days, and 6 months.']});
+        display({badge:'Initial medical pathway',color:'blue',title:'Systemic anticoagulation',description:'With no ascites, bowel wall edema, or necrosis, the source algorithm starts systemic anticoagulation and requires a CT reassessment at 24 hours.',timeline:[baseline,{title:'No ascites, edema, or necrosis',detail:'Uncomplicated morphology in the figure.'},{title:'Systemic anticoagulation',detail:'Initial management depicted.',important:true},{title:'Repeat CT at 24 hours',detail:'Pending: select the follow-up CT finding to determine whether to escalate.'}],notes:['Start with the source-specified systemic anticoagulation pathway, subject to standard clinical assessment and contraindications.','Repeat CT at 24 hours. Progression leads to endovascular intervention; absence of progression continues medical management.','The source subsequently shows CE-CT follow-up at 7 days, 30 days, and 6 months.']});
         return;
       }
       progress.style.width='100%';
@@ -335,7 +334,7 @@
       }
       if(ct24.value==='progression') {
         activeBranch('endo');
-        display({badge:'Escalation pathway',color:'purple',title:'Escalate to endovascular therapy',description:'Progressive thrombus extension, newly developed wall edema, or ascites at 24-hour reassessment triggers endovascular therapy in the supplied figure.',timeline:[baseline,{title:'No ascites, edema, or necrosis',detail:'Initial anticoagulation-first pathway.'},{title:'Systemic anticoagulation + CT at 24 hours',detail:'Initial treatment and imaging reassessment.'},{title:'24-hour CT: progression',detail:'Extension, wall edema, or ascites.',important:true},{title:'Endovascular therapy',detail:'Escalation recommended in the source.',important:true},anticoag,followup],notes:['Endovascular therapy is the source-specified escalation for progressive extension, wall edema, or ascites.','The algorithm shows systemic anticoagulation after intervention, with clinical appropriateness individualized.','Contrast-enhanced CT (CE-CT) follow-up at 7 days, 30 days, and 6 months.']});
+        display({badge:'Escalation pathway',color:'purple',title:'Escalate to endovascular intervention',description:'Progressive thrombus extension, newly developed wall edema, or ascites at 24-hour reassessment triggers endovascular intervention in the supplied figure.',timeline:[baseline,{title:'No ascites, edema, or necrosis',detail:'Initial anticoagulation-first pathway.'},{title:'Systemic anticoagulation + CT at 24 hours',detail:'Initial treatment and imaging reassessment.'},{title:'24-hour CT: progression',detail:'Extension, wall edema, or ascites.',important:true},{title:'Endovascular intervention',detail:'Escalation recommended in the source.',important:true},anticoag,followup],notes:['Endovascular intervention is the source-specified escalation for progressive extension, wall edema, or ascites.','The algorithm shows systemic anticoagulation after intervention, with clinical appropriateness individualized.','Contrast-enhanced CT (CE-CT) follow-up at 7 days, 30 days, and 6 months.']});
       }
     }
 
