@@ -100,7 +100,7 @@
     .citation-label {margin:0 0 8px;text-transform:uppercase;letter-spacing:.11em;font-weight:800;font-size:11px;color:#58708d}
     .citation p:last-child {font-size:13px;line-height:1.65;margin:0;color:#394b60}
     .citation a {overflow-wrap:anywhere}
-    .foot {padding:6px 0 35px;font-size:12px;color:#667486;line-height:1.6;text-align:center}
+    .foot {padding:6px 0 35px;font-size:12px;color:#667486;line-height:1.6}
     details {background:#fff;border:1px solid var(--line);border-radius:13px;margin-bottom:20px;overflow:hidden}
     summary {cursor:pointer;padding:17px 21px;font-weight:700;font-size:14px;list-style-position:inside}
     details .inside {padding:0 21px 19px;font-size:13px;color:#58667a;line-height:1.6}
@@ -122,7 +122,7 @@
     .footer-logo {display:block!important;width:380px!important;max-width:380px!important;height:auto!important;object-fit:contain;background:transparent;border:0;box-shadow:none;}
     @media (max-width:640px) {.footer-logo{width:min(90vw,380px)!important;max-width:90vw!important;}}
     @media print {.footer-logo{width:320px!important;max-width:320px!important;}}
-
+  
     /* Button-based, one-tap AMVT assessment */
     .question {font-size:16px;line-height:1.45;display:block;font-weight:650;margin:0 0 15px;color:var(--ink)}
     .choice-group {display:flex;flex-direction:column;gap:10px}
@@ -142,8 +142,7 @@
   <header>
     <div class="wrap">
 <h1>Acute Mesenteric Venous Thrombosis</h1>
-      <p class="intro">An interactive decision tree for CT-confirmed AMVT, adapted from the supplied management algorithm.</p>
-      <p class="hero-source">Adapted from Köhler et al. (2026), Figure 6. <a href="https://doi.org/10.1007/s00261-026-05786-6" target="_blank" rel="noopener noreferrer">View source paper (DOI)</a></p>
+      <p class="intro">An interactive management decision tree</p>
     </div>
   </header>
 
@@ -394,7 +393,6 @@
       } catch(e) {btn.textContent='Copy unavailable';setTimeout(()=>btn.textContent='Copy summary',2200);}
     });
     update();
-    refreshChoiceStates();
   })();
   </script>
 </body>
