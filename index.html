@@ -69,6 +69,37 @@ small { color:var(--muted) }
 .pick-footer-logo { display:block; width:380px; max-width:100%; height:auto; object-fit:contain; background:transparent; border:0; box-shadow:none }
 @media(max-width:640px) { .pick-footer-logo { width:min(90vw,380px); } }
 @media print { .pick-footer-logo { width:320px; max-width:100%; } }
+
+/* Prevent long clinical option labels from widening the dropdown past its field.
+   The menu and closed control share a width, leaving even side margins. */
+.clinical-dropdown { position:relative; width:100%; min-width:0 }
+.field .clinical-dropdown-trigger {
+  display:flex; align-items:center; justify-content:space-between; gap:9px;
+  width:100%; min-width:0; min-height:40px; padding:8px 11px;
+  background:#fff; border:1px solid #cdd7e4; border-radius:8px;
+  color:var(--ink); font:inherit; font-weight:400; text-align:left;
+}
+.field .clinical-dropdown-trigger:focus, .field .clinical-dropdown-trigger[aria-expanded="true"] {
+  border-color:var(--accent); box-shadow:0 0 0 3px #99000017;
+}
+.clinical-dropdown-trigger .choice-label { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.clinical-dropdown-trigger .choice-chevron { width:8px; height:8px; flex:none; margin-right:3px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg) translateY(-2px) }
+.clinical-dropdown-menu {
+  position:absolute; top:calc(100% + 3px); left:0; right:0; z-index:40;
+  width:100%; max-width:100%; max-height:260px; overflow-y:auto;
+  padding:3px; border:1px solid #b9c4d2; border-radius:8px;
+  background:white; box-shadow:0 7px 20px #14253b26;
+}
+.clinical-dropdown-menu[hidden] { display:none }
+.field .clinical-dropdown-option {
+  display:block; width:100%; padding:9px 11px; border:0; border-radius:5px;
+  background:white; color:var(--ink); font:inherit; font-weight:400;
+  line-height:1.38; text-align:left; white-space:normal;
+  overflow-wrap:break-word; cursor:pointer;
+}
+.field .clinical-dropdown-option:hover, .field .clinical-dropdown-option:focus-visible { background:#f2f4f9; outline:none }
+.field .clinical-dropdown-option[aria-selected="true"] { background:#f7eaec }
+@media print { .clinical-dropdown-menu { display:none!important } }
 </style>
 </head>
 <body>
@@ -170,6 +201,96 @@ for(const id of childPughFields)$(id).addEventListener('change',calculate);
 $('reset').addEventListener('click',()=>{for(const id of [...ids.filter(id=>id!=='dialysis'),...childPughFields])$(id).value='';$('dialysis').checked=false;calculate();});
 $('print').addEventListener('click',()=>window.print());
 $('copy').addEventListener('click',async()=>{if(!last&&!childPugh)return;const {p,fips,meld,meld3}=last??{};const existingScores=last?`MELD original: ${meld}\nMELD 3.0: ${meld3}\nFIPS: ${fips.toFixed(2)} (${fips>=0.92?'higher':'lower'} risk)\nAge: ${p.age} years; Sex: ${p.sex}; Total bilirubin: ${p.bilirubin} mg/dL; Creatinine: ${p.creatinine} mg/dL; Albumin: ${p.albumin} g/dL; INR: ${p.inr}; Sodium: ${p.sodium} mEq/L; Qualifying dialysis: ${p.dialysis?'Yes':'No'}`:'';const childPughScore=childPugh?`Child-Pugh: ${childPugh.points} (Class ${childPugh.grade})`:'';const message=[existingScores,childPughScore].filter(Boolean).join('\n');try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(message);else{const t=document.createElement('textarea');t.value=message;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy failed');t.remove();}const old=$('copy').textContent;$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent=old,1500);}catch(e){window.prompt('Copy the results:',message);}});
+
+/* Keep the original <select> elements as the calculation's source of truth.
+   Render Sex, Ascites, and Hepatic encephalopathy as matching in-page, width-bound menus. */
+const clinicalDropdowns=[];
+function setClinicalDropdownOpen(dropdown, open){
+  if(open) for(const other of clinicalDropdowns) if(other!==dropdown) setClinicalDropdownOpen(other,false);
+  dropdown.menu.hidden=!open;
+  dropdown.trigger.setAttribute('aria-expanded',String(open));
+}
+function createClinicalDropdown(id){
+  const select=$(id);
+  const originalLabel=select.parentElement.querySelector('label');
+  const container=document.createElement('div');
+  container.className='clinical-dropdown';
+  const trigger=document.createElement('button');
+  trigger.type='button';
+  trigger.className='clinical-dropdown-trigger';
+  trigger.id=id+'-trigger';
+  trigger.setAttribute('aria-haspopup','listbox');
+  trigger.setAttribute('aria-expanded','false');
+  trigger.setAttribute('aria-controls',id+'-choices');
+  const choiceLabel=document.createElement('span');
+  choiceLabel.className='choice-label';
+  choiceLabel.textContent=select.options[0].textContent;
+  const chevron=document.createElement('span');
+  chevron.className='choice-chevron';
+  chevron.setAttribute('aria-hidden','true');
+  trigger.append(choiceLabel,chevron);
+  const menu=document.createElement('div');
+  menu.className='clinical-dropdown-menu';
+  menu.id=id+'-choices';
+  menu.setAttribute('role','listbox');
+  menu.setAttribute('aria-label',originalLabel.textContent.trim());
+  menu.hidden=true;
+  const options=[];
+  for(const [index,option] of [...select.options].entries()) {
+    if(option.disabled) continue;
+    const item=document.createElement('button');
+    item.type='button';
+    item.className='clinical-dropdown-option';
+    item.setAttribute('role','option');
+    item.setAttribute('aria-selected','false');
+    item.textContent=option.textContent;
+    item.addEventListener('click',()=>{
+      select.selectedIndex=index;
+      choiceLabel.textContent=option.textContent;
+      for(const other of options) other.item.setAttribute('aria-selected',String(other.index===index));
+      setClinicalDropdownOpen(dropdown,false);
+      trigger.focus();
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+    options.push({index,item});
+    menu.append(item);
+  }
+  container.append(trigger,menu);
+  select.after(container);
+  select.hidden=true;
+  originalLabel.htmlFor=trigger.id;
+  const dropdown={trigger,menu,options,select,choiceLabel};
+  clinicalDropdowns.push(dropdown);
+  trigger.addEventListener('click',()=>setClinicalDropdownOpen(dropdown,menu.hidden));
+  trigger.addEventListener('keydown',event=>{
+    if(['ArrowDown','ArrowUp'].includes(event.key)&&menu.hidden){
+      event.preventDefault();setClinicalDropdownOpen(dropdown,true);
+      const target=event.key==='ArrowUp'?options.at(-1):options[0];
+      target?.item.focus();
+    } else if(event.key==='Escape')setClinicalDropdownOpen(dropdown,false);
+  });
+  menu.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();setClinicalDropdownOpen(dropdown,false);trigger.focus();}
+    if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+      event.preventDefault();const i=options.findIndex(o=>o.item===document.activeElement);
+      const next=options[(i+(event.key==='ArrowDown'?1:-1)+options.length)%options.length];next?.item.focus();
+    }
+  });
+  return dropdown;
+}
+for(const id of ['sex','ascites','encephalopathy'])createClinicalDropdown(id);
+document.addEventListener('pointerdown',event=>{
+  for(const dropdown of clinicalDropdowns)
+    if(!dropdown.trigger.parentElement.contains(event.target))setClinicalDropdownOpen(dropdown,false);
+});
+$('reset').addEventListener('click',()=>{
+  for(const dropdown of clinicalDropdowns){
+    dropdown.choiceLabel.textContent=dropdown.select.options[0].textContent;
+    for(const {item} of dropdown.options)item.setAttribute('aria-selected','false');
+    setClinicalDropdownOpen(dropdown,false);
+  }
+});
+
 calculate();
 </script>
 </body></html>
