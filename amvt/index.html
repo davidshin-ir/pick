@@ -122,6 +122,19 @@
     .footer-logo {display:block!important;width:380px!important;max-width:380px!important;height:auto!important;object-fit:contain;background:transparent;border:0;box-shadow:none;}
     @media (max-width:640px) {.footer-logo{width:min(90vw,380px)!important;max-width:90vw!important;}}
     @media print {.footer-logo{width:320px!important;max-width:320px!important;}}
+
+    /* Button-based, one-tap AMVT assessment */
+    .question {font-size:16px;line-height:1.45;display:block;font-weight:650;margin:0 0 15px;color:var(--ink)}
+    .choice-group {display:flex;flex-direction:column;gap:10px}
+    .choice {width:100%;display:flex;align-items:center;text-align:left;gap:12px;background:#fff;border:1.5px solid #cbd6e3;border-radius:10px;color:#23364c;font-size:14px;line-height:1.48;font-weight:550;padding:15px 16px;min-height:54px;white-space:normal;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s}
+    .choice:hover {background:#f4f8fc;border-color:#9bb2cc;transform:none}
+    .choice:focus-visible {outline:3px solid #a6c4eb;outline-offset:2px}
+    .choice-indicator {display:inline-block;flex:0 0 20px;width:20px;height:20px;border:2px solid #9cafc6;border-radius:50%;background:#fff;position:relative}
+    .choice.is-selected {background:#ebf2fc;border-color:#426b9f;color:#17395e;box-shadow:0 0 0 2px rgba(66,107,159,.10)}
+    .choice.is-selected .choice-indicator {border-color:#3767a4;background:#3767a4;box-shadow:inset 0 0 0 4px #fff}
+    .choice:active {transform:none}
+    @media (max-width:640px) {.choice{font-size:13px;padding:14px 13px;min-height:48px}.question{font-size:15px}}
+    @media print {.choice-group{gap:3px}.choice:not(.is-selected){display:none}.choice.is-selected{background:#fff;border:1px solid #bbc5d3;box-shadow:none;min-height:0;padding:7px 10px}.choice-indicator{display:none}}
   </style>
 </head>
 <body>
@@ -141,40 +154,40 @@
         <div class="paneltop">
           <p class="eyebrow">Interactive assessment</p>
           <h2 id="question-title">Navigate the algorithm</h2>
-          <p class="sub">Dropdown choices reveal the next applicable decision point.</p>
+          <p class="sub">Select an answer to reveal the next applicable decision point.</p>
         </div>
         <div class="progress" aria-hidden="true"><div id="progress"></div></div>
         <form class="questions" id="decision-form" autocomplete="off">
           <div class="step" id="step-1">
             <div class="stephead"><span class="stepnumber">01</span><span>Initial CT finding</span></div>
-            <label for="necrosis">Are CT findings concerning for intestinal wall necrosis present (pneumatosis, pneumoperitoneum, or portal venous gas)?</label>
-            <select id="necrosis" name="necrosis">
-              <option value="">Select CT finding...</option>
-              <option value="yes">Yes - pneumatosis, pneumoperitoneum, or portal venous gas present</option>
-              <option value="no">No - none of these CT findings present</option>
-            </select>
+            <p class="question" id="necrosis-question">Are CT findings concerning for intestinal wall necrosis present (pneumatosis, pneumoperitoneum, or portal venous gas)?</p>
+            <div class="choice-group" data-target="necrosis" role="group" aria-labelledby="necrosis-question">
+              <button type="button" class="choice" data-value="yes" aria-pressed="false"><span class="choice-indicator" aria-hidden="true"></span><span>Yes - pneumatosis, pneumoperitoneum, or portal venous gas present</span></button>
+              <button type="button" class="choice" data-value="no" aria-pressed="false"><span class="choice-indicator" aria-hidden="true"></span><span>No - none of these CT findings present</span></button>
+            </div>
+            <input id="necrosis" type="hidden" name="necrosis" value="">
             <p class="help">These findings can raise concern for severe bowel ischemia or necrosis but do not independently prove transmural necrosis. The source figure directs patients with intestinal wall necrosis to emergency laparotomy; correlate with clinical findings and urgent surgical assessment.</p>
           </div>
 
           <div class="step" id="step-2" hidden>
             <div class="stephead"><span class="stepnumber">02</span><span>Initial CT phenotype</span></div>
-            <label for="morphology">With no intestinal wall necrosis, which CT pattern is present?</label>
-            <select id="morphology" name="morphology">
-              <option value="">Select the closest matching pattern...</option>
-              <option value="uncomplicated">No ascites and no bowel wall edema</option>
-              <option value="highrisk">Ascites or bowel wall edema</option>
-            </select>
+            <p class="question" id="morphology-question">With no intestinal wall necrosis, which CT pattern is present?</p>
+            <div class="choice-group" data-target="morphology" role="group" aria-labelledby="morphology-question">
+              <button type="button" class="choice" data-value="uncomplicated" aria-pressed="false"><span class="choice-indicator" aria-hidden="true"></span><span>No ascites and no bowel wall edema</span></button>
+              <button type="button" class="choice" data-value="highrisk" aria-pressed="false"><span class="choice-indicator" aria-hidden="true"></span><span>Ascites or bowel wall edema</span></button>
+            </div>
+            <input id="morphology" type="hidden" name="morphology" value="">
             <p class="help">Adapted criterion: either ascites or bowel wall edema selects the endovascular pathway. Figure 6 originally specifies both findings without collaterals.</p>
           </div>
 
           <div class="step" id="step-3" hidden>
             <div class="stephead"><span class="stepnumber">03</span><span>24-hour CT reassessment</span></div>
-            <label for="ct24">What does the repeat CT at approximately 24 hours show?</label>
-            <select id="ct24" name="ct24">
-              <option value="" disabled selected hidden>Select 24-hour CT finding...</option>
-              <option value="stable">No progression or complication</option>
-              <option value="progression">Progressive thrombus extension, bowel wall edema, or ascites</option>
-            </select>
+            <p class="question" id="ct24-question">What does the repeat CT at approximately 24 hours show?</p>
+            <div class="choice-group" data-target="ct24" role="group" aria-labelledby="ct24-question">
+              <button type="button" class="choice" data-value="stable" aria-pressed="false"><span class="choice-indicator" aria-hidden="true"></span><span>No progression or complication</span></button>
+              <button type="button" class="choice" data-value="progression" aria-pressed="false"><span class="choice-indicator" aria-hidden="true"></span><span>Progressive thrombus extension, bowel wall edema, or ascites</span></button>
+            </div>
+            <input id="ct24" type="hidden" name="ct24" value="">
             <p class="help">The 24-hour CT reassessment is depicted only for the initially uncomplicated, anticoagulation-first branch.</p>
           </div>
         </form>
@@ -238,6 +251,28 @@
     const ct24 = $('ct24');
     const result = $('result');
     const progress = $('progress');
+    const choiceGroups = [...document.querySelectorAll('.choice-group')];
+    function refreshChoiceStates() {
+      choiceGroups.forEach(group => {
+        const field = $(group.dataset.target);
+        group.querySelectorAll('button.choice').forEach(button => {
+          const selected = field.value === button.dataset.value;
+          button.classList.toggle('is-selected', selected);
+          button.setAttribute('aria-pressed', String(selected));
+        });
+      });
+    }
+    choiceGroups.forEach(group => {
+      group.addEventListener('click', event => {
+        const button = event.target.closest('button.choice');
+        if (!button || !group.contains(button)) return;
+        const field = $(group.dataset.target);
+        if (field.value === button.dataset.value) return;
+        field.value = button.dataset.value;
+        field.dispatchEvent(new Event('change', { bubbles:true }));
+        refreshChoiceStates();
+      });
+    });
     let summaryText = '';
 
     const escapeHtml = (s) => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -269,7 +304,7 @@
       const notes = data.notes || [];
       result.innerHTML = `<span class="statebadge ${el(data.color)}">${el(data.badge)}</span>
         <h3 class="outcome">${el(data.title)}</h3>
-        ${data.description ? `<p class="desc">${el(data.description)}</p>` : ""}
+        <p class="desc">${el(data.description)}</p>
         <div class="timeline"><h3>Selected decision path</h3><ol>${steps.map(x=>entry(x.title,x.detail,x.important)).join('')}</ol></div>
         ${notes.length?`<div class="care"><h3>Management and follow-up</h3><ul>${notes.map(n=>`<li>${el(n)}</li>`).join('')}</ul></div>`:''}
         <div class="aside-note">Figure-derived institutional pathway only. This output does not establish a patient-specific order or supersede multidisciplinary clinical assessment.</div>`;
@@ -277,7 +312,8 @@
         'ACUTE MESENTERIC VENOUS THROMBOSIS (AMVT) - FIGURE-DERIVED DECISION PATH',
         '',
         'Result: ' + data.title,
-        ...(data.description ? [data.description, ''] : []),
+        data.description,
+        '',
         'Selected path:',
         ...steps.map((s,i) => `${i+1}. ${s.title} - ${s.detail}`),
         '',
@@ -342,7 +378,7 @@
     morphology.addEventListener('change',() => {ct24.value='';update();});
     ct24.addEventListener('change',update);
     $('decision-form').addEventListener('submit',e=>e.preventDefault());
-    $('reset-btn').addEventListener('click',() => {necrosis.value='';morphology.value='';ct24.value='';update();necrosis.focus();});
+    $('reset-btn').addEventListener('click',() => {necrosis.value='';morphology.value='';ct24.value='';update();refreshChoiceStates();document.querySelector('[data-target="necrosis"] .choice')?.focus();});
     $('print-btn').addEventListener('click',() => window.print());
     $('copy-btn').addEventListener('click',async () => {
       if(!summaryText) return;
@@ -358,6 +394,7 @@
       } catch(e) {btn.textContent='Copy unavailable';setTimeout(()=>btn.textContent='Copy summary',2200);}
     });
     update();
+    refreshChoiceStates();
   })();
   </script>
 </body>
