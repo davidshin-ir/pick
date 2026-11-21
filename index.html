@@ -102,13 +102,13 @@ small { color:var(--muted) }
 @media print { .clinical-dropdown-menu { display:none!important } }
 
 /* Links to the companion interactive clinical management algorithms. */
-.algorithms-panel { margin-top:16px; }
-.algorithms-panel h2 { margin-bottom:13px; }
+.algorithms-panel { margin-top:16px; background:#f9ecee; border-color:#dfbcc2; --line:#e6cdd2; --ink:#532630; --muted:#745760; --accent:#922d46; }
+.algorithms-panel h2 { color:#70273a; margin-bottom:13px; }
 .algorithm-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
 .algorithm-link {
   display:flex; flex-direction:column; justify-content:space-between; gap:12px;
   min-width:0; min-height:116px; padding:15px 16px;
-  border:1px solid var(--line); border-radius:11px; background:#fbfcfe;
+  border:1px solid var(--line); border-radius:11px; background:#fffafb;
   color:var(--ink); text-decoration:none;
   transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease;
 }
@@ -170,13 +170,13 @@ small { color:var(--muted) }
 <div class="foot">Clinical reference for adults. Does not incorporate transplant exception points, other allocation rules, or individual contraindications to TIPS. Validate critical clinical decisions against current institutional and transplant-program standards. This webpage is self-contained and works offline; external reference links require internet access.</div>
 </div></details></section>
 <section aria-labelledby="algorithms-title" class="panel algorithms-panel">
-<h2 id="algorithms-title">Interactive Management Algorithms</h2>
+<h2 id="algorithms-title">Check out these clinical management algorithms</h2>
 <nav class="algorithm-links" aria-label="Clinical management algorithms">
 <a class="algorithm-link" href="https://davidshin-ir.github.io/pick/pvt/" target="_blank" rel="noopener noreferrer">
 <span><span class="algorithm-link-name">Portal Vein Thrombosis</span><span class="algorithm-link-subtitle">General PVT management algorithm</span></span><span aria-hidden="true" class="algorithm-link-open">↗</span>
 </a>
 <a class="algorithm-link" href="https://davidshin-ir.github.io/pick/cirrhoticpvt/" target="_blank" rel="noopener noreferrer">
-<span><span class="algorithm-link-name">PVT in Cirrhosis</span><span class="algorithm-link-subtitle">Cirrhosis-specific PVT management algorithm</span></span><span aria-hidden="true" class="algorithm-link-open">↗</span>
+<span><span class="algorithm-link-name">Cirrhotic Portal Vein Thrombosis</span><span class="algorithm-link-subtitle">Cirrhosis-specific PVT management algorithm</span></span><span aria-hidden="true" class="algorithm-link-open">↗</span>
 </a>
 <a class="algorithm-link" href="https://davidshin-ir.github.io/pick/amvt/" target="_blank" rel="noopener noreferrer">
 <span><span class="algorithm-link-name">Acute Mesenteric Venous Thrombosis</span><span class="algorithm-link-subtitle">Bowel-focused management algorithm</span></span><span aria-hidden="true" class="algorithm-link-open">↗</span>
