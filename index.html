@@ -36,7 +36,8 @@ button.primary { background:var(--accent); color:#fff; border-color:var(--accent
 button:focus-visible { outline:3px solid #e8ae3699; outline-offset:2px }
 .results { display:grid; gap:10px }
 .score { border:1px solid var(--line); border-radius:12px; padding:13px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; background:#fff }
-.score.meld-score { background:#eef5fc; border-color:#c8daed }
+.score.meld-score { background:#f0f4e7; border-color:#bdcca6; color:#304325; --muted:#506146 }
+.meld-score .tag.neutral { background:#dfe8d1; color:#425334 }
 .score.fips-score { background:#fff2ec; border-color:#ebcfbf }
 .score.child-pugh-score { background:#f3effa; border-color:#d9cdeb }
 .score-label { font-size:13px; font-weight:800; letter-spacing:.03em }
@@ -171,7 +172,7 @@ small { color:var(--muted) }
 </div><p class="note" id="adjustments"></p></section>
 <div class="reference-panels">
 <section aria-labelledby="algorithms-title" class="panel algorithms-panel">
-<h2 id="algorithms-title"><span style="color: #002775">PICK</span> clinical management algorithms</h2>
+<h2 id="algorithms-title"><span style="color: #002775">PICK</span> Algorithms</h2>
 <nav class="algorithm-links" aria-label="Clinical management algorithms">
 <a class="algorithm-link" href="https://davidshin-ir.github.io/pick/avb/" target="_blank" rel="noopener noreferrer">
 <span><span class="algorithm-link-name">Acute Variceal Bleeding</span><span class="algorithm-link-subtitle">Baveno VIII management algorithm</span></span><span aria-hidden="true" class="algorithm-link-open">↗</span>
