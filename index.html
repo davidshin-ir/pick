@@ -203,7 +203,7 @@ h1 .title-subline {font-size:clamp(1rem,1.5vw,1.2rem);margin-top:5px}
 @media(max-width:580px){.top{gap:12px}.pick-header-logo{max-width:34%;width:170px}}
 
 /* Bottom attribution */
-.page-attribution { border-top:1px solid #bdc8d7; margin-top:26px; padding:13px 8px 16px; text-align:center; color:var(--muted); font-family:"Segoe Script","Lucida Handwriting","Apple Chancery","Brush Script MT",cursive; font-style:italic; font-size:12px; line-height:1.6; }
+.page-attribution { border-top:1px solid #bdc8d7; margin-top:26px; padding:13px 8px 16px; text-align:center; color:var(--muted); font-family:"Segoe Script","Lucida Handwriting","Apple Chancery","Brush Script MT",cursive; font-style:normal; font-size:12px; line-height:1.6; }
 
 /* Match the height of the two calculator panels and distribute the score cards. */
 .calculator-grid > [aria-labelledby="scores-title"] {display:flex;flex-direction:column}
@@ -222,6 +222,14 @@ h1 .title-subline {font-size:clamp(1rem,1.5vw,1.2rem);margin-top:5px}
 }
 @media screen and (min-width:1101px) {
   .calculator-grid {grid-template-rows:1fr auto}
+}
+
+
+/* Compact desktop layout: reduce the scores column, not the other panels. */
+@media screen and (min-width:1101px) {
+  .wrap {max-width:1380px}
+  .dashboard {grid-template-columns:minmax(0,1.60fr) minmax(0,1fr)}
+  .calculator-grid {grid-template-columns:minmax(0,1.52fr) minmax(0,1fr)}
 }
 
 </style>
